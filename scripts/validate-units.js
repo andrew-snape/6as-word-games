@@ -19,7 +19,7 @@ function rel(p) {
   return path.relative(ROOT, p);
 }
 
-const GAME_KEYS = ['wordle', 'connections', 'wordsearch', 'wordhunt'];
+const GAME_KEYS = ['wordle', 'anagram', 'connections', 'wordsearch', 'wordhunt'];
 
 function findUnitFiles(gameDir) {
   const unitsDir = path.join(ROOT, 'games', gameDir, 'units');
@@ -69,6 +69,33 @@ function validateWordle(filePath, data) {
   }
   if (data.words.length < 2) {
     warnings.push(`${f}: only ${data.words.length} word(s) -- "Play Again" will always pick the same word`);
+  }
+}
+
+function validateAnagram(filePath, data) {
+  const f = rel(filePath);
+  if (typeof data.unitName !== 'string' || !data.unitName.trim()) {
+    errors.push(`${f}: missing or empty "unitName"`);
+  }
+  if (!Array.isArray(data.words) || data.words.length === 0) {
+    errors.push(`${f}: "words" must be a non-empty array`);
+    return;
+  }
+  const seen = new Set();
+  for (const w of data.words) {
+    if (typeof w !== 'string' || !WORD_RE.test(w)) {
+      errors.push(`${f}: word "${w}" must contain only letters (no spaces/punctuation/numbers)`);
+      continue;
+    }
+    if (w.length < 3) {
+      warnings.push(`${f}: word "${w}" is very short for an anagram (${w.length} letters)`);
+    }
+    const upper = w.toUpperCase();
+    if (seen.has(upper)) warnings.push(`${f}: word "${w}" appears more than once`);
+    seen.add(upper);
+  }
+  if (data.words.length < 2) {
+    warnings.push(`${f}: only ${data.words.length} word(s) -- "Next Word" will always pick the same word`);
   }
 }
 
@@ -213,6 +240,10 @@ function main() {
   for (const filePath of findUnitFiles('wordle')) {
     const data = readJSON(filePath);
     if (data) validateWordle(filePath, data);
+  }
+  for (const filePath of findUnitFiles('anagram')) {
+    const data = readJSON(filePath);
+    if (data) validateAnagram(filePath, data);
   }
   for (const filePath of findUnitFiles('connections')) {
     const data = readJSON(filePath);

@@ -44,6 +44,37 @@ live.
   keyboard support.
 - Tracks a per-device win streak (see "Streak tracking" below).
 
+## Adding a new Anagram Scramble unit
+
+Anagram reuses exactly the same unit format as Wordle:
+
+```json
+{
+  "unitName": "Term 3 Week 5 Spelling",
+  "words": ["OCEAN", "TIGER", "PLANT", "STORM", "CHAIR"]
+}
+```
+
+Unlike Wordle, words don't need to be the same length -- each one is scrambled
+and solved independently, so a mixed-length list is fine (and adds variety).
+Create `games/anagram/units/unitN.json` and add it to
+`games/anagram/units/index.json` the same way as a Wordle unit. In fact, if
+you want an anagram version of an existing Wordle unit, you can just copy
+that unit's JSON file across unchanged.
+
+### How Anagram Scramble works
+
+- A word is picked at random from the unit's list and its letters are
+  scrambled into a row of tappable tiles.
+- Tap tiles to spell your answer; tap a tile in your answer to send it back.
+  Shuffle re-scrambles the remaining letters, Undo removes the last placed
+  letter, Clear empties the answer.
+- No timer and no guess limit -- press Check as many times as you like.
+  Wrong guesses just send the letters back to the pool.
+- Reveal shows the answer and moves on (counts as a loss for the streak);
+  solving it yourself counts as a win. Tracks a per-device streak (see
+  "Streak tracking" below).
+
 ## Adding a new Connections unit
 
 Create `games/connections/units/unitN.json` with exactly 4 groups of 4 words
@@ -141,6 +172,7 @@ count as a loss -- only the two natural end states do.
 
 - **Wordle**: General Words, Maths Words, Sharing the Planet: Market Words,
   Sharing the Planet: Enterprise Values
+- **Anagram Scramble**: same four units as Wordle
 - **Connections**: Sharing the Planet: What's My Business?
 - **Word Search**: Sharing the Planet: What's My Business?
 - **Word Hunt**: General & Maths Words
@@ -180,7 +212,7 @@ on-screen theme, so they don't waste ink.
 
 ## Streak tracking
 
-Wordle, Connections, and Word Hunt track a simple per-device win streak
+Wordle, Anagram Scramble, Connections, and Word Hunt track a simple per-device win streak
 (played / current streak / best streak) via `localStorage` -- no login or
 account needed, and it resets if a student switches devices. Word Search
 doesn't have one, since it has no win/lose state to track. The shared logic

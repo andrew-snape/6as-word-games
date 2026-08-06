@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Anagram Scramble &mdash; 6AS Word Games</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('wordgames-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body {
+    padding: 10px;
+  }
+
+  .page {
+    max-width: 560px;
+  }
+
+  #unit-name {
+    text-align: center;
+    color: var(--muted);
+    margin-top: -8px;
+  }
+
+  #instructions {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  #status-bar {
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    margin: 6px 0;
+  }
+
+  #message {
+    text-align: center;
+    min-height: 26px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  #answer-row, #letter-pool {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  #answer-row {
+    margin: 16px 0;
+  }
+
+  #letter-pool {
+    margin: 20px 0;
+  }
+
+  .letter-tile {
+    width: 15vw;
+    height: 15vw;
+    max-width: 56px;
+    max-height: 56px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(18px, 5vw, 26px);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .letter-tile.slot {
+    border: 2px dashed var(--card-border);
+    background: transparent;
+    color: var(--text);
+  }
+
+  .letter-tile.slot.filled {
+    border-style: solid;
+    background: var(--card-bg);
+    cursor: pointer;
+  }
+
+  .letter-tile.pool-tile {
+    border: none;
+    background: var(--accent);
+    color: var(--accent-text);
+    cursor: pointer;
+  }
+
+  .letter-tile.pool-tile:hover, .letter-tile.pool-tile:focus {
+    filter: brightness(1.08);
+  }
+
+  .letter-tile.pool-tile:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  #next-btn {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-nav">
+    <a href="../../index.html">&larr; Home</a>
+    <button id="theme-toggle" class="btn secondary theme-toggle" aria-label="Toggle dark mode" type="button">🌙</button>
+  </div>
+  <header class="site-header">
+    <h1>Anagram Scramble</h1>
+    <p id="unit-name"></p>
+  </header>
+
+  <div class="unit-picker"><select id="unit-picker"></select></div>
+  <p class="stats-line" id="stats-line"></p>
+
+  <p id="instructions">Tap the scrambled letters to spell the word. No timer, no guess limit &mdash; take your time.</p>
+  <p id="status-bar"><span id="solved-count">Solved: 0</span></p>
+
+  <div id="message" aria-live="polite"></div>
+  <div id="answer-row"></div>
+  <div id="letter-pool"></div>
+
+  <div class="actions">
+    <button id="undo-btn" class="btn secondary">Undo</button>
+    <button id="clear-btn" class="btn secondary">Clear</button>
+    <button id="shuffle-btn" class="btn secondary">Shuffle</button>
+    <button id="submit-btn" class="btn">Check</button>
+    <button id="reveal-btn" class="btn secondary">Reveal</button>
+    <button id="next-btn" class="btn">Next Word</button>
+  </div>
+</div>
+
+<script src="../../theme.js"></script>
+<script src="../../unit-picker.js"></script>
+<script src="../../stats.js"></script>
+<script src="anagram.js"></script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 # 6AS Word Games
 
 A free, static, no-login word games site for the class: Wordle, Connections,
-and a Word Search generator. Hosted on GitHub Pages, updated by adding small
-JSON files -- no game code changes needed for a new unit.
+a Word Search generator, and Word Hunt. Hosted on GitHub Pages, updated by
+adding small JSON files -- no game code changes needed for a new unit. A
+validation script (see below) catches malformed unit files before they go
+live.
 
 ## Adding a new Wordle unit
 
@@ -94,12 +96,39 @@ backwards:
 
 Tapping the same (anchored) letter twice cancels the selection.
 
+## Adding a new Word Hunt unit
+
+Create `games/wordhunt/units/unitN.json`:
+
+```json
+{
+  "unitName": "Term 3 Week 4 Spelling",
+  "words": ["OCEAN", "TIGER", "PLANT", "STORM", "CHAIR"],
+  "gridSize": 11,
+  "timeSeconds": 90
+}
+```
+
+`gridSize` and the word-length rule of thumb are the same as Word Search.
+`timeSeconds` is optional (defaults to 90).
+
+Unlike Word Search, words aren't hidden in straight lines -- each one is
+placed along a path of touching (including diagonal) letters, so the same
+word can bend and double back through the grid. Students tap letters one at
+a time (each tap must touch the previous one and can't reuse a letter
+already in the current word) and press Submit before the timer runs out.
+Undo removes the last letter, Clear resets the current attempt. Score is
+just how many of the unit's words got found in time -- there's no dictionary
+check, so only words from the unit's list count (this is spelling/vocab
+practice, not open-ended Boggle).
+
 ## Current units
 
 - **Wordle**: General Words, Maths Words, Sharing the Planet: Market Words,
   Sharing the Planet: Enterprise Values
 - **Connections**: Sharing the Planet: What's My Business?
 - **Word Search**: Sharing the Planet: What's My Business?
+- **Word Hunt**: General & Maths Words
 
 The "Sharing the Planet" units are drawn from the Year 6 "What's My Business?"
 unit of inquiry (social enterprise, ALWS partnerships, global citizenship).
@@ -111,6 +140,23 @@ Claude Code and say something like *"Here's this week's spelling list for
 Term 3 Week 5: OCEAN, TIGER, ... Please create a new Wordle unit, link it from
 the homepage, commit and push."* For Connections, also supply (or ask Claude
 Code to draft, then review) the four category groupings.
+
+## Validating unit files
+
+Before pushing a new or edited unit, run:
+
+```
+node scripts/validate-units.js
+```
+
+It checks each game's rules (Wordle word-length consistency, Connections'
+4-groups-of-4 structure and unique words, Word Search/Word Hunt gridSize vs.
+longest word), that every word contains only letters, and cross-checks that
+every unit file is actually linked from `index.html` (and that every link on
+the homepage points to a file that exists). Exits non-zero on errors. This
+also runs automatically on every push and pull request via
+`.github/workflows/validate.yml`, so a bad unit file gets caught before (or
+right after) it reaches `main`.
 
 ## Local testing
 

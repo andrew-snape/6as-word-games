@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Word Hunt &mdash; 6AS Word Games</title>
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body {
+    padding: 10px;
+  }
+
+  .page {
+    max-width: 620px;
+  }
+
+  #unit-name {
+    text-align: center;
+    color: var(--muted);
+    margin-top: -8px;
+  }
+
+  #instructions {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  #status-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  #timer.low {
+    color: #c0392b;
+  }
+
+  #message {
+    text-align: center;
+    min-height: 26px;
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  #current-word {
+    text-align: center;
+    min-height: 28px;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  #grid-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  #grid {
+    display: grid;
+    gap: 1px;
+    background: var(--card-border);
+    border: 2px solid var(--card-border);
+    touch-action: none;
+    user-select: none;
+  }
+
+  .cell {
+    aspect-ratio: 1;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: clamp(11px, 3.4vw, 18px);
+    color: var(--text);
+  }
+
+  .cell.path {
+    background: #cfe0ff;
+  }
+
+  .cell.found-0 { background: #ffd166; }
+  .cell.found-1 { background: #a0c35a; }
+  .cell.found-2 { background: #b0c4ef; }
+  .cell.found-3 { background: #ba81c5; }
+  .cell.found-4 { background: #f28482; }
+  .cell.found-5 { background: #90dbf4; }
+  .cell.found-6 { background: #f6bd60; }
+  .cell.found-7 { background: #84a59d; }
+
+  #word-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  #word-list li {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  #word-list li.found {
+    text-decoration: line-through;
+    color: var(--muted);
+    border-color: var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-nav"><a href="../../index.html">&larr; Home</a></div>
+  <header class="site-header">
+    <h1>Word Hunt</h1>
+    <p id="unit-name"></p>
+  </header>
+  <p id="instructions">Tap letters that touch each other to spell a word, then press Submit.</p>
+
+  <div id="status-bar">
+    <span id="timer">90s</span>
+    <span id="score">Found: 0 / 0</span>
+  </div>
+
+  <div id="message" aria-live="polite"></div>
+  <div id="current-word" aria-live="polite"></div>
+  <div id="grid-wrap"><div id="grid"></div></div>
+  <ul id="word-list"></ul>
+
+  <div class="actions">
+    <button id="undo-btn" class="btn secondary">Undo</button>
+    <button id="clear-btn" class="btn secondary">Clear</button>
+    <button id="submit-btn" class="btn">Submit</button>
+    <button id="new-puzzle-btn" class="btn secondary">New Puzzle</button>
+  </div>
+</div>
+
+<script src="wordhunt.js"></script>
+</body>
+</html>

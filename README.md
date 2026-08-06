@@ -38,8 +38,16 @@ live.
 - The answer is chosen at random from the unit's word list each time the page
   loads or "Play Again" is pressed.
 - Guesses aren't restricted to the unit's own word list -- students can type
-  any word of the right length, same as real Wordle. This keeps the game from
-  being solvable by just cycling through the other four words.
+  any real word of the right length, same as real Wordle. This keeps the game
+  from being solvable by just cycling through the other four words.
+- Guesses are checked against a bundled dictionary (`games/wordle/dictionary/
+  5.json`, `6.json`, `7.json`), so random letters are rejected with "Not a
+  real word" and don't cost a guess. The dictionary is a filtered system word
+  list with profanity and slurs stripped out before it was bundled -- see the
+  comment at the top of `scripts/build-wordle-dictionary.py` if it ever needs
+  regenerating (e.g. to support a new word length). A unit's own words are
+  always accepted as guesses even if the dictionary doesn't happen to include
+  them (e.g. British spellings like METRE/LITRE that a US word list omits).
 - 6 guesses, green/yellow/grey tiles, on-screen keyboard plus physical
   keyboard support.
 - Tracks a per-device win streak (see "Streak tracking" below).

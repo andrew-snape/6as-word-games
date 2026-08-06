@@ -25,6 +25,35 @@
   let gameOver = false;
   const keyStatus = {};
 
+  const dictionaryCache = {};
+  let dictionary = new Set();
+  let dictionaryReady = false;
+
+  function loadDictionary(length) {
+    dictionaryReady = false;
+    if (dictionaryCache[length]) {
+      dictionary = dictionaryCache[length];
+      dictionaryReady = true;
+      return;
+    }
+    fetch(`dictionary/${length}.json`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((list) => {
+        const set = new Set(list);
+        dictionaryCache[length] = set;
+        dictionary = set;
+        dictionaryReady = true;
+      })
+      .catch(() => {
+        dictionary = new Set();
+        dictionaryReady = true;
+      });
+  }
+
+  function isValidWord(guess) {
+    return dictionary.has(guess) || words.includes(guess);
+  }
+
   function updateStatsDisplay() {
     if (statsLineEl) statsLineEl.textContent = Stats.summaryText('wordle');
   }
@@ -150,6 +179,16 @@
       return;
     }
 
+    if (!dictionaryReady) {
+      showMessage('Still loading -- try again in a moment', 1200);
+      return;
+    }
+
+    if (!isValidWord(currentGuess)) {
+      showMessage('Not a real word', 1200);
+      return;
+    }
+
     const guess = currentGuess;
     const result = evaluateGuess(guess);
     const row = boardEl.querySelector(`.row[data-row="${guesses.length}"]`);
@@ -213,6 +252,7 @@
     playAgainBtn.style.display = 'none';
     buildBoard();
     resetKeyboardColors();
+    loadDictionary(wordLength);
   }
 
   document.addEventListener('keydown', (e) => {

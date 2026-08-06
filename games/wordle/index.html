@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Wordle &mdash; 6AS Word Games</title>
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body {
+    padding: 10px;
+  }
+
+  .page {
+    max-width: 480px;
+  }
+
+  #unit-name {
+    text-align: center;
+    color: var(--muted);
+    margin-top: -8px;
+  }
+
+  #message {
+    text-align: center;
+    min-height: 28px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  #board {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 16px auto;
+    width: 100%;
+  }
+
+  .row {
+    display: grid;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .tile {
+    width: 15vw;
+    height: 15vw;
+    max-width: 62px;
+    max-height: 62px;
+    min-width: 36px;
+    min-height: 36px;
+    border: 2px solid var(--card-border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(18px, 5vw, 28px);
+    font-weight: 800;
+    text-transform: uppercase;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .tile.filled {
+    border-color: #9aa4b2;
+  }
+
+  .tile.correct {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+
+  .tile.present {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    color: #fff;
+  }
+
+  .tile.absent {
+    background: var(--grey);
+    border-color: var(--grey);
+    color: #fff;
+  }
+
+  #keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .kb-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .key {
+    flex: 1;
+    max-width: 44px;
+    min-width: 26px;
+    height: 52px;
+    border: none;
+    border-radius: 8px;
+    background: var(--card-border);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .key.wide {
+    max-width: 70px;
+    font-size: 12px;
+  }
+
+  .key.correct {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .key.present {
+    background: var(--yellow);
+    color: #fff;
+  }
+
+  .key.absent {
+    background: var(--grey);
+    color: #fff;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  #play-again {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-nav"><a href="../../index.html">&larr; Home</a></div>
+  <header class="site-header">
+    <h1>Wordle</h1>
+    <p id="unit-name"></p>
+  </header>
+
+  <div id="message" aria-live="polite"></div>
+  <div id="board"></div>
+
+  <div id="keyboard"></div>
+
+  <div class="actions">
+    <button id="play-again" class="btn">Play Again</button>
+  </div>
+</div>
+
+<script src="wordle.js"></script>
+</body>
+</html>

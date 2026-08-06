@@ -11,6 +11,7 @@
   const messageEl = document.getElementById('message');
   const unitNameEl = document.getElementById('unit-name');
   const playAgainBtn = document.getElementById('play-again');
+  const statsLineEl = document.getElementById('stats-line');
 
   const params = new URLSearchParams(window.location.search);
   const unitId = params.get('unit') || 'unit1';
@@ -23,6 +24,10 @@
   let guesses = [];
   let gameOver = false;
   const keyStatus = {};
+
+  function updateStatsDisplay() {
+    if (statsLineEl) statsLineEl.textContent = Stats.summaryText('wordle');
+  }
 
   function showMessage(text, ms) {
     messageEl.textContent = text;
@@ -161,6 +166,8 @@
       gameOver = true;
       showMessage("You got it! Well done!");
       playAgainBtn.style.display = 'inline-block';
+      Stats.record('wordle', true);
+      updateStatsDisplay();
       return;
     }
 
@@ -168,6 +175,8 @@
       gameOver = true;
       showMessage(`Out of guesses! The word was ${answer}`);
       playAgainBtn.style.display = 'inline-block';
+      Stats.record('wordle', false);
+      updateStatsDisplay();
       return;
     }
 
@@ -231,6 +240,7 @@
       unitNameEl.textContent = unitName;
       buildKeyboard();
       startGame();
+      updateStatsDisplay();
     })
     .catch(() => {
       unitNameEl.textContent = '';

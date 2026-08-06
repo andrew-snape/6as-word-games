@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Word Hunt &mdash; 6AS Word Games</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('wordgames-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
 <link rel="stylesheet" href="../../style.css">
 <style>
   body {
@@ -131,11 +139,18 @@
 </head>
 <body>
 <div class="page">
-  <div class="top-nav"><a href="../../index.html">&larr; Home</a></div>
+  <div class="top-nav">
+    <a href="../../index.html">&larr; Home</a>
+    <button id="theme-toggle" class="btn secondary theme-toggle" aria-label="Toggle dark mode" type="button">🌙</button>
+  </div>
   <header class="site-header">
     <h1>Word Hunt</h1>
     <p id="unit-name"></p>
   </header>
+
+  <div class="unit-picker"><select id="unit-picker"></select></div>
+  <p class="stats-line" id="stats-line"></p>
+
   <p id="instructions">Tap letters that touch each other to spell a word, then press Submit.</p>
 
   <div id="status-bar">
@@ -156,6 +171,9 @@
   </div>
 </div>
 
+<script src="../../theme.js"></script>
+<script src="../../unit-picker.js"></script>
+<script src="../../stats.js"></script>
 <script src="wordhunt.js"></script>
 </body>
 </html>

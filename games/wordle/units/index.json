@@ -1,0 +1,8 @@
+{
+  "units": [
+    { "id": "unit5", "name": "General Words" },
+    { "id": "unit4", "name": "Maths Words" },
+    { "id": "unit2", "name": "Sharing the Planet: Market Words" },
+    { "id": "unit3", "name": "Sharing the Planet: Enterprise Values" }
+  ]
+}

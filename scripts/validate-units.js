@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-// Validates every games/*/units/*.json file and cross-checks index.html links.
+// Validates every games/*/units/*.json file and cross-checks each game's
+// units/index.json manifest (the source the homepage and in-game unit
+// picker both read from).
 // Run with: node scripts/validate-units.js
 'use strict';
 
@@ -17,12 +19,14 @@ function rel(p) {
   return path.relative(ROOT, p);
 }
 
+const GAME_KEYS = ['wordle', 'connections', 'wordsearch', 'wordhunt'];
+
 function findUnitFiles(gameDir) {
   const unitsDir = path.join(ROOT, 'games', gameDir, 'units');
   if (!fs.existsSync(unitsDir)) return [];
   return fs
     .readdirSync(unitsDir)
-    .filter((f) => f.endsWith('.json'))
+    .filter((f) => f.endsWith('.json') && f !== 'index.json')
     .map((f) => path.join(unitsDir, f));
 }
 
@@ -158,31 +162,49 @@ function validateGridGame(filePath, data, { requireGridSize }) {
   }
 }
 
-function checkHomepageLinks() {
-  const indexPath = path.join(ROOT, 'index.html');
-  if (!fs.existsSync(indexPath)) {
-    warnings.push('index.html not found -- skipped homepage link cross-check');
+function checkManifest(gameDir) {
+  const manifestPath = path.join(ROOT, 'games', gameDir, 'units', 'index.json');
+  const label = rel(manifestPath);
+
+  if (!fs.existsSync(manifestPath)) {
+    errors.push(`${label}: manifest is missing -- the homepage and in-game unit picker both read this file`);
     return;
   }
-  const html = fs.readFileSync(indexPath, 'utf8');
-  const linkRe = /href="games\/(wordle|connections|wordsearch|wordhunt)\/index\.html\?unit=([\w-]+)"/g;
-  const linked = { wordle: new Set(), connections: new Set(), wordsearch: new Set(), wordhunt: new Set() };
-  let m;
-  while ((m = linkRe.exec(html))) {
-    linked[m[1]].add(m[2]);
+
+  const data = readJSON(manifestPath);
+  if (!data) return;
+
+  if (!Array.isArray(data.units)) {
+    errors.push(`${label}: "units" must be an array`);
+    return;
   }
 
-  for (const game of Object.keys(linked)) {
-    const existingIds = findUnitFiles(game).map((f) => path.basename(f, '.json'));
-    for (const unitId of linked[game]) {
-      if (!existingIds.includes(unitId)) {
-        errors.push(`index.html: links to games/${game}/units/${unitId}.json but that file doesn't exist`);
-      }
+  const existingIds = findUnitFiles(gameDir).map((f) => path.basename(f, '.json'));
+  const manifestIds = [];
+
+  data.units.forEach((entry, i) => {
+    const entryLabel = `${label}: entry ${i + 1}`;
+    if (typeof entry.id !== 'string' || !entry.id.trim()) {
+      errors.push(`${entryLabel}: missing or empty "id"`);
+      return;
     }
-    for (const unitId of existingIds) {
-      if (!linked[game].has(unitId)) {
-        warnings.push(`games/${game}/units/${unitId}.json exists but isn't linked from index.html`);
-      }
+    if (typeof entry.name !== 'string' || !entry.name.trim()) {
+      errors.push(`${entryLabel}: missing or empty "name"`);
+    }
+    manifestIds.push(entry.id);
+    if (!existingIds.includes(entry.id)) {
+      errors.push(`${label}: lists "${entry.id}" but games/${gameDir}/units/${entry.id}.json doesn't exist`);
+    }
+  });
+
+  const dupIds = manifestIds.filter((id, i) => manifestIds.indexOf(id) !== i);
+  for (const id of new Set(dupIds)) {
+    errors.push(`${label}: "${id}" appears more than once`);
+  }
+
+  for (const unitId of existingIds) {
+    if (!manifestIds.includes(unitId)) {
+      warnings.push(`games/${gameDir}/units/${unitId}.json exists but isn't listed in ${label}`);
     }
   }
 }
@@ -205,7 +227,9 @@ function main() {
     if (data) validateGridGame(filePath, data, { requireGridSize: true });
   }
 
-  checkHomepageLinks();
+  for (const game of GAME_KEYS) {
+    checkManifest(game);
+  }
 
   if (warnings.length) {
     console.log('Warnings:');

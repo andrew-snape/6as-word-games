@@ -12,6 +12,38 @@
   --radius: 14px;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14181f;
+    --text: #eef1f5;
+    --muted: #9aa4b2;
+    --card-bg: #1c222c;
+    --card-border: #2c333f;
+    --accent: #5b8dff;
+    --accent-text: #0b1220;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14181f;
+  --text: #eef1f5;
+  --muted: #9aa4b2;
+  --card-bg: #1c222c;
+  --card-border: #2c333f;
+  --accent: #5b8dff;
+  --accent-text: #0b1220;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5b6472;
+  --card-bg: #f4f6f8;
+  --card-border: #d7dce2;
+  --accent: #2f6fed;
+  --accent-text: #ffffff;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -57,6 +89,54 @@ header.site-header p {
   color: var(--muted);
   margin: 0;
   font-size: 18px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  padding: 8px 12px;
+  min-height: 40px;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.unit-picker {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.unit-picker select {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--card-border);
+  background: var(--bg);
+  color: var(--text);
+  max-width: 100%;
+}
+
+.stats-line {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 4px;
 }
 
 .card {
@@ -115,10 +195,6 @@ header.site-header p {
   cursor: not-allowed;
 }
 
-.top-nav {
-  margin-bottom: 20px;
-}
-
 .top-nav a {
   font-weight: 700;
   text-decoration: none;
@@ -130,7 +206,14 @@ header.site-header p {
 }
 
 @media print {
-  header.site-header, .top-nav, .btn {
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --bg: #ffffff !important;
+    --text: #1a1a1a !important;
+    --card-bg: #f4f6f8 !important;
+    --card-border: #d7dce2 !important;
+  }
+
+  header.site-header, .top-nav, .btn, .theme-toggle, .stats-line {
     display: none;
   }
 }

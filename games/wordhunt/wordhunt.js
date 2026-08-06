@@ -19,6 +19,7 @@
   const clearBtn = document.getElementById('clear-btn');
   const submitBtn = document.getElementById('submit-btn');
   const newPuzzleBtn = document.getElementById('new-puzzle-btn');
+  const statsLineEl = document.getElementById('stats-line');
 
   const params = new URLSearchParams(window.location.search);
   const unitId = params.get('unit') || 'unit1';
@@ -168,6 +169,12 @@
     messageEl.textContent = reason === 'time'
       ? `Time's up! You found ${foundWords.size} of ${words.length}.`
       : `You found every word! Great work!`;
+    Stats.record('wordhunt', reason === 'all-found');
+    updateStatsDisplay();
+  }
+
+  function updateStatsDisplay() {
+    if (statsLineEl) statsLineEl.textContent = Stats.summaryText('wordhunt');
   }
 
   function tickTimer() {
@@ -290,6 +297,7 @@
       timeSeconds = data.timeSeconds || DEFAULT_TIME_SECONDS;
       unitNameEl.textContent = data.unitName || unitId;
       startPuzzle();
+      updateStatsDisplay();
     })
     .catch(() => {
       unitNameEl.textContent = '';

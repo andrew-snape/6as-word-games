@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Word Search &mdash; 6AS Word Games</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('wordgames-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
 <link rel="stylesheet" href="../../style.css">
 <style>
   body {
@@ -112,7 +120,7 @@
   }
 
   @media print {
-    #message, #instructions, .actions, .top-nav, header p { display: none; }
+    #message, #instructions, .actions, .top-nav, .unit-picker, header p { display: none; }
     .cell.found-0, .cell.found-1, .cell.found-2, .cell.found-3,
     .cell.found-4, .cell.found-5, .cell.found-6, .cell.found-7 {
       background: var(--bg);
@@ -122,11 +130,16 @@
 </head>
 <body>
 <div class="page">
-  <div class="top-nav"><a href="../../index.html">&larr; Home</a></div>
+  <div class="top-nav">
+    <a href="../../index.html">&larr; Home</a>
+    <button id="theme-toggle" class="btn secondary theme-toggle" aria-label="Toggle dark mode" type="button">🌙</button>
+  </div>
   <header class="site-header">
     <h1>Word Search</h1>
     <p id="unit-name"></p>
   </header>
+
+  <div class="unit-picker"><select id="unit-picker"></select></div>
 
   <p id="instructions">Tap the first and last letter of a word (or drag across it).</p>
   <div id="message" aria-live="polite"></div>
@@ -139,6 +152,8 @@
   </div>
 </div>
 
+<script src="../../theme.js"></script>
+<script src="../../unit-picker.js"></script>
 <script src="wordsearch.js"></script>
 </body>
 </html>

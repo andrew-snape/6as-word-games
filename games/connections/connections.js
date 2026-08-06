@@ -10,6 +10,7 @@
   const deselectBtn = document.getElementById('deselect-btn');
   const submitBtn = document.getElementById('submit-btn');
   const playAgainBtn = document.getElementById('play-again');
+  const statsLineEl = document.getElementById('stats-line');
 
   const params = new URLSearchParams(window.location.search);
   const unitId = params.get('unit') || 'unit1';
@@ -29,6 +30,10 @@
       [copy[i], copy[j]] = [copy[j], copy[i]];
     }
     return copy;
+  }
+
+  function updateStatsDisplay() {
+    if (statsLineEl) statsLineEl.textContent = Stats.summaryText('connections');
   }
 
   function showMessage(text, ms) {
@@ -90,6 +95,8 @@
       gameOver = true;
       showMessage('You found all the groups! Well done!');
       playAgainBtn.style.display = 'inline-block';
+      Stats.record('connections', true);
+      updateStatsDisplay();
     }
   }
 
@@ -143,6 +150,8 @@
         showMessage('Out of guesses! Here are the groups:');
         revealRemaining();
         playAgainBtn.style.display = 'inline-block';
+        Stats.record('connections', false);
+        updateStatsDisplay();
       }
     }, 400);
   }
@@ -204,6 +213,7 @@
       }
 
       startGame();
+      updateStatsDisplay();
     })
     .catch(() => {
       unitNameEl.textContent = '';

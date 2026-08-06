@@ -4,49 +4,86 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>6AS Word Games</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('wordgames-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="page">
   <header class="site-header">
-    <h1>6AS Word Games</h1>
+    <div class="header-row">
+      <h1>6AS Word Games</h1>
+      <button id="theme-toggle" class="btn secondary theme-toggle" aria-label="Toggle dark mode" type="button">🌙</button>
+    </div>
     <p>Spelling and vocabulary games for our class</p>
   </header>
 
   <section class="card">
     <h2>Wordle</h2>
     <p class="description">Guess the word in 6 tries.</p>
-    <ul class="unit-list" id="wordle-units">
-      <li><a class="btn" href="games/wordle/index.html?unit=unit5">General Words</a></li>
-      <li><a class="btn" href="games/wordle/index.html?unit=unit4">Maths Words</a></li>
-      <li><a class="btn" href="games/wordle/index.html?unit=unit2">Sharing the Planet: Market Words</a></li>
-      <li><a class="btn" href="games/wordle/index.html?unit=unit3">Sharing the Planet: Enterprise Values</a></li>
-    </ul>
+    <ul class="unit-list" id="wordle-units"></ul>
   </section>
 
   <section class="card">
     <h2>Connections</h2>
     <p class="description">Find groups of four related words.</p>
-    <ul class="unit-list" id="connections-units">
-      <li><a class="btn" href="games/connections/index.html?unit=unit1">Sharing the Planet: What's My Business?</a></li>
-    </ul>
+    <ul class="unit-list" id="connections-units"></ul>
   </section>
 
   <section class="card">
     <h2>Word Search</h2>
     <p class="description">Find all the hidden words in the grid.</p>
-    <ul class="unit-list" id="wordsearch-units">
-      <li><a class="btn" href="games/wordsearch/index.html?unit=unit1">Sharing the Planet: What's My Business?</a></li>
-    </ul>
+    <ul class="unit-list" id="wordsearch-units"></ul>
   </section>
 
   <section class="card">
     <h2>Word Hunt</h2>
     <p class="description">Find as many words as you can before time runs out!</p>
-    <ul class="unit-list" id="wordhunt-units">
-      <li><a class="btn" href="games/wordhunt/index.html?unit=unit1">General &amp; Maths Words</a></li>
-    </ul>
+    <ul class="unit-list" id="wordhunt-units"></ul>
   </section>
 </div>
+
+<script src="theme.js"></script>
+<script>
+  const GAMES = [
+    { key: 'wordle', listId: 'wordle-units' },
+    { key: 'connections', listId: 'connections-units' },
+    { key: 'wordsearch', listId: 'wordsearch-units' },
+    { key: 'wordhunt', listId: 'wordhunt-units' },
+  ];
+
+  for (const game of GAMES) {
+    const listEl = document.getElementById(game.listId);
+    fetch(`games/${game.key}/units/index.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error('manifest not found');
+        return res.json();
+      })
+      .then((data) => {
+        listEl.innerHTML = '';
+        for (const unit of data.units) {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.className = 'btn';
+          a.href = `games/${game.key}/index.html?unit=${unit.id}`;
+          a.textContent = unit.name;
+          li.appendChild(a);
+          listEl.appendChild(li);
+        }
+        if (data.units.length === 0) {
+          listEl.innerHTML = '<li class="empty-note">No units yet -- coming soon.</li>';
+        }
+      })
+      .catch(() => {
+        listEl.innerHTML = '<li class="empty-note">Couldn\'t load units for this game.</li>';
+      });
+  }
+</script>
 </body>
 </html>

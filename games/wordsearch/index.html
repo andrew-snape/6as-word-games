@@ -57,6 +57,18 @@
     background: #cfe0ff;
   }
 
+  .cell.anchor {
+    outline: 3px solid var(--accent);
+    outline-offset: -3px;
+  }
+
+  #instructions {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
   .cell.found-0 { background: #ffd166; }
   .cell.found-1 { background: #a0c35a; }
   .cell.found-2 { background: #b0c4ef; }
@@ -100,7 +112,7 @@
   }
 
   @media print {
-    #message, .actions, .top-nav, header p { display: none; }
+    #message, #instructions, .actions, .top-nav, header p { display: none; }
     .cell.found-0, .cell.found-1, .cell.found-2, .cell.found-3,
     .cell.found-4, .cell.found-5, .cell.found-6, .cell.found-7 {
       background: var(--bg);
@@ -116,6 +128,7 @@
     <p id="unit-name"></p>
   </header>
 
+  <p id="instructions">Tap the first and last letter of a word (or drag across it).</p>
   <div id="message" aria-live="polite"></div>
   <div id="grid-wrap"><div id="grid"></div></div>
   <ul id="word-list"></ul>

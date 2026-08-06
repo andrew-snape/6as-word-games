@@ -20,8 +20,9 @@
   let gridSize = 12;
   let grid = [];
   let foundWords = new Set();
-  let selecting = false;
-  let startCell = null;
+  let pendingAnchor = null;
+  let pressCell = null;
+  let pressMoved = false;
   let colorIndex = 0;
 
   function randomLetter() {
@@ -110,6 +111,10 @@
     return path.map(({ r, c }) => grid[r][c]).join('');
   }
 
+  function cellEl(r, c) {
+    return gridEl.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+  }
+
   function clearSelectionHighlight() {
     gridEl.querySelectorAll('.cell.selecting').forEach((el) => el.classList.remove('selecting'));
   }
@@ -117,9 +122,22 @@
   function highlightPath(path) {
     clearSelectionHighlight();
     for (const { r, c } of path) {
-      const el = gridEl.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+      const el = cellEl(r, c);
       if (el) el.classList.add('selecting');
     }
+  }
+
+  function setAnchor(cell) {
+    pendingAnchor = cell;
+    const el = cellEl(cell.r, cell.c);
+    if (el) el.classList.add('anchor');
+  }
+
+  function clearAnchor() {
+    if (!pendingAnchor) return;
+    const el = cellEl(pendingAnchor.r, pendingAnchor.c);
+    if (el) el.classList.remove('anchor');
+    pendingAnchor = null;
   }
 
   function markFound(path, word) {
@@ -137,23 +155,19 @@
     if (li) li.classList.add('found');
   }
 
-  function finishSelection(endCell) {
-    if (!startCell) return;
-    const path = getLinePath(startCell, endCell);
+  function attemptFinish(a, b) {
     clearSelectionHighlight();
-    if (path) {
-      const forward = pathToWord(path);
-      const backward = forward.split('').reverse().join('');
-      const match = words.find((w) => !foundWords.has(w) && (w === forward || w === backward));
-      if (match) {
-        markFound(path, match);
-        if (foundWords.size === words.length) {
-          messageEl.textContent = 'You found every word! Great work!';
-        }
+    const path = getLinePath(a, b);
+    if (!path) return;
+    const forward = pathToWord(path);
+    const backward = forward.split('').reverse().join('');
+    const match = words.find((w) => !foundWords.has(w) && (w === forward || w === backward));
+    if (match) {
+      markFound(path, match);
+      if (foundWords.size === words.length) {
+        messageEl.textContent = 'You found every word! Great work!';
       }
     }
-    startCell = null;
-    selecting = false;
   }
 
   function cellFromPoint(x, y) {
@@ -162,28 +176,58 @@
     return { r: Number(el.dataset.r), c: Number(el.dataset.c) };
   }
 
+  function sameCell(a, b) {
+    return !!a && !!b && a.r === b.r && a.c === b.c;
+  }
+
+  // Selection works two ways, so it's forgiving on touch devices:
+  // 1. Drag from the first letter to the last and release.
+  // 2. Tap the first letter, then tap the last letter (no dragging needed).
+  // Tapping the same anchor cell twice cancels the selection.
   function onPointerDown(e) {
     const cell = cellFromPoint(e.clientX, e.clientY);
     if (!cell) return;
     e.preventDefault();
-    selecting = true;
-    startCell = cell;
+    pressCell = cell;
+    pressMoved = false;
     highlightPath([cell]);
   }
 
   function onPointerMove(e) {
-    if (!selecting || !startCell) return;
+    if (!pressCell) return;
     const cell = cellFromPoint(e.clientX, e.clientY);
     if (!cell) return;
-    const path = getLinePath(startCell, cell);
+    if (!sameCell(cell, pressCell)) pressMoved = true;
+    const path = getLinePath(pressCell, cell);
     if (path) highlightPath(path);
   }
 
   function onPointerUp(e) {
-    if (!selecting) return;
+    if (!pressCell) return;
     const point = e.changedTouches ? e.changedTouches[0] : e;
-    const cell = cellFromPoint(point.clientX, point.clientY) || startCell;
-    finishSelection(cell);
+    const releaseCell = cellFromPoint(point.clientX, point.clientY) || pressCell;
+
+    if (pressMoved && !sameCell(releaseCell, pressCell)) {
+      // A real drag: it defines its own selection outright.
+      clearAnchor();
+      attemptFinish(pressCell, releaseCell);
+    } else if (pendingAnchor === null) {
+      // First tap: remember it and wait for the second tap.
+      clearSelectionHighlight();
+      setAnchor(pressCell);
+    } else if (sameCell(pressCell, pendingAnchor)) {
+      // Tapped the anchor again: cancel.
+      clearSelectionHighlight();
+      clearAnchor();
+    } else {
+      // Second tap: finish the selection from the anchor.
+      const anchor = pendingAnchor;
+      clearAnchor();
+      attemptFinish(anchor, pressCell);
+    }
+
+    pressCell = null;
+    pressMoved = false;
   }
 
   function renderGrid() {

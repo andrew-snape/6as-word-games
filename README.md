@@ -82,14 +82,21 @@ Create `games/wordsearch/units/unitN.json`:
 `gridSize` should comfortably exceed your longest word -- as a rule of thumb,
 at least `longest word length + 2`. The grid is regenerated fresh (new random
 placements) on every page load and via the "New Puzzle" button, so the same
-unit plays differently each time. Students select a word by dragging (mouse)
-or swiping (touch) from its first to last letter, in any of the 8 directions,
-forwards or backwards. Includes a print stylesheet so it can double as a
-worksheet.
+unit plays differently each time. Includes a print stylesheet so it can
+double as a worksheet.
+
+Students select a word two ways, in any of the 8 directions, forwards or
+backwards:
+- **Tap the first letter, then tap the last letter** -- the more reliable
+  option on touch devices, since it doesn't need an accurate drag.
+- **Drag from the first letter to the last** -- works well with a mouse or
+  trackpad.
+
+Tapping the same (anchored) letter twice cancels the selection.
 
 ## Current units
 
-- **Wordle**: Sample Spelling Words (demo), Sharing the Planet: Market Words,
+- **Wordle**: General Words, Maths Words, Sharing the Planet: Market Words,
   Sharing the Planet: Enterprise Values
 - **Connections**: Sharing the Planet: What's My Business?
 - **Word Search**: Sharing the Planet: What's My Business?

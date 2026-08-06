@@ -1,0 +1,9 @@
+{
+  "unitName": "Sharing the Planet: What's My Business?",
+  "groups": [
+    { "category": "Human-Centred Design Phases", "words": ["EMPATHISE", "DEFINE", "IDEATE", "PROTOTYPE"], "difficulty": "yellow" },
+    { "category": "Running a Market Stall", "words": ["PROFIT", "BUDGET", "MARKET", "LOAN"], "difficulty": "green" },
+    { "category": "Global Citizenship Concepts", "words": ["RESPONSIBILITY", "COLLABORATION", "EMPATHY", "STEWARDSHIP"], "difficulty": "blue" },
+    { "category": "ALWS Partner Countries", "words": ["BURUNDI", "KENYA", "NEPAL", "CAMBODIA"], "difficulty": "purple" }
+  ]
+}

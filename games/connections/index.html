@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Connections &mdash; 6AS Word Games</title>
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body {
+    padding: 10px;
+  }
+
+  .page {
+    max-width: 560px;
+  }
+
+  #unit-name {
+    text-align: center;
+    color: var(--muted);
+    margin-top: -8px;
+  }
+
+  #instructions {
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  #message {
+    text-align: center;
+    min-height: 26px;
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  #solved-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .solved-group {
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .solved-group .cat-name {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .solved-group .cat-words {
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .diff-yellow { background: #f9df6d; color: #4a3f00; }
+  .diff-green { background: #a0c35a; color: #1e3a05; }
+  .diff-blue { background: #b0c4ef; color: #142a5e; }
+  .diff-purple { background: #ba81c5; color: #3b0a42; }
+
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  .tile {
+    aspect-ratio: 1.3;
+    border: 2px solid var(--card-border);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-weight: 700;
+    font-size: clamp(11px, 3.2vw, 15px);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .tile.selected {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .tile.shake {
+    animation: shake 0.4s;
+  }
+
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+
+  #mistakes {
+    text-align: center;
+    color: var(--muted);
+    margin: 8px 0;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin: 0 3px;
+  }
+
+  .dot.used {
+    background: transparent;
+    border: 2px solid var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  #play-again {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top-nav"><a href="../../index.html">&larr; Home</a></div>
+  <header class="site-header">
+    <h1>Connections</h1>
+    <p id="unit-name"></p>
+  </header>
+  <p id="instructions">Find groups of four related words.</p>
+
+  <div id="message" aria-live="polite"></div>
+  <div id="solved-groups"></div>
+  <div id="grid"></div>
+  <div id="mistakes"></div>
+
+  <div class="actions">
+    <button id="shuffle-btn" class="btn secondary">Shuffle</button>
+    <button id="deselect-btn" class="btn secondary">Deselect All</button>
+    <button id="submit-btn" class="btn">Submit</button>
+    <button id="play-again" class="btn">Play Again</button>
+  </div>
+</div>
+
+<script src="connections.js"></script>
+</body>
+</html>
